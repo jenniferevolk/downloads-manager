@@ -13,14 +13,15 @@ def unzip(filename):
             n = n + 1
         destination = f"{destination}({n})"
     os.mkdir(destination)
+    print(f"✔️ Unzipping {filename} to {destination}")
     try:
         with zipfile.ZipFile(filename, 'r') as zipObj:
             zipObj.extractall(destination)
     except BadZipfile:
-        print(f"[-] ERROR bad zipfile {filename}")
+        print(f"❌ ERROR bad zipfile {filename}")
     else:
         os.remove(filename)
-        print(f"[+] Unzipped {filename} to {destination}")
+
 
 
 def move(filename):
@@ -29,26 +30,26 @@ def move(filename):
         destination = file_type[extension]
         if not os.path.isdir(destination):
             os.mkdir(destination)
-            print(f"[+] created {destination} folder")
 
-        if not os.path.isfile(f"{destination}/{filename}"):
-            shutil.move(filename, destination)
-            print(f"[+] moved {filename} to {destination}")
-        else:
+        if os.path.isfile(f"{destination}/{filename}"):
             duplicate = filecmp.cmp(filename, f"{destination}/{filename}", shallow=False)
             if duplicate:
-                print(f"[+] already have {filename}")
+                print(f"✔️ Removing duplicate {filename}")
                 os.remove(filename)
+                return
             else:
                 n = 2
                 name = os.path.splitext(filename)[0]
                 while os.path.isfile(f"{destination}/{file}({n}).{extension}"):
                     n = n + 1
                 destination = f"{destination}/{name}({n}).{extension}"
-                shutil.move(filename, destination)
-                print(f"[+] moved {filename} to {destination}")
+        else
+            destination=f"{destination}/{filename}"
+        print(f"✔️ Moving {filename} ➡️ {destination}")
+        shutil.move(filename, destination)
+
     else:
-        print(f"[-]unknown file type {extension} for {filename}")
+        print(f"❔ Skipping {filename} unknown file type {extension}")
 
 
 def filelist(path):
